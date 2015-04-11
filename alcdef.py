@@ -1,6 +1,8 @@
 """
 ALCDEF light curve parsing
 
+Format specification: http://www.minorplanetcenter.net/light_curve2/docs/ALCDEF_Standard.pdf
+
 """
 
 from collections import namedtuple
