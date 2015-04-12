@@ -92,7 +92,7 @@ DB_name = "mp_properties"
 #def query_mpc_db(DB_SOURCE,DB_user,DB_pw,DB_name,max_amount_of_data=100, parameters_to_limit=[], order_by=[]):
     #TODO: make inputs optional!
 import string
-columns = string.join("""
+STANDARD_COLUMNS = string.join("""
 absolute_magnitude
 albedo  
 albedo_2  
@@ -152,12 +152,16 @@ v_minus_wprime
 v_minus_yprime
 v_minus_zprime
 """.split(), ",")
-print columns
 
-import simplejson as json
-for i in range(7):
-    query = make_query_mpc_db("{} OFFSET {}".format(100000, 100000 * i), [], [], columns)
-    mpc_data = retrieve_from_mpc_db(DB_SOURCE,DB_user,DB_pw,DB_name,query)
-    #print mpc_data
-    with open("data_dump_{}.json".format(i), "w") as json_file:
-        json.dump(mpc_data, json_file)
+def query_mpc_db(DB_SOURCE, DB_user, DB_pw, DB_name, max_amount_of_data=100,
+        parameters_to_limit=[], order_by=[]):
+    query = make_query_mpc_db(max_amount_of_data, parameters_to_limit, order_by, STANDARD_COLUMNS)
+    return retrieve_from_mpc_db(DB_SOURCE, DB_user, DB_pw, DB_name, query)
+
+def filter_script():
+    import simplejson as json
+    for i in range(7):
+        query = make_query_mpc_db("{} OFFSET {}".format(100000, 100000 * i), [], [], columns)
+        mpc_data = retrieve_from_mpc_db(DB_SOURCE,DB_user,DB_pw,DB_name,query)
+        with open("data_dump_{}.json".format(i), "w") as json_file:
+            json.dump(mpc_data, json_file)
