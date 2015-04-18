@@ -43,6 +43,7 @@ mean_anomaly
 name
 number
 object_type
+orbit_type
 observations
 panstarrs_v_minus_gprime
 panstarrs_v_minus_iprime
