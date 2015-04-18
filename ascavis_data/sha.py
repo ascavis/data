@@ -1,6 +1,19 @@
 """
 Spitzer Heritage Archive queries
 
+Usage:
+
+First you have to query all observations for a given JPL number. You can then
+download the spectrum for each observation.
+
+>>> from ascavis_data import sha
+>>> spitzer = sha.SpitzerHeritageArchive(httplib2.Http(".cache"))
+>>> observations = sha.parse_table(spitzer.query_by_jpl(253))
+>>> spectra = map(
+...     lambda obs: sha.parse_table(spitzer.download_spectrum(obs)),
+...     filter(sha.is_spectrum, observations)
+... )
+
 """
 
 import httplib2
@@ -47,7 +60,9 @@ class SpitzerHeritageArchive(object):
         # Query the SHA data service
         data_query = (DATA_SERVICE_URL + "?NAIFID={}&VERB=3&DATASET=" + DATASET
             ).format(naif_id)
-        return self.http_backend.request(data_query, "GET")
+        _header, content = self.http_backend.request(data_query, "GET")
+        return content
 
     def download_spectrum(self, observation):
-        return self.http_backend.request(observation["accessUrl"], "GET")
+        _header, content = self.http_backend.request(observation["accessUrl"], "GET")
+        return content
